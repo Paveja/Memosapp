@@ -1,0 +1,1 @@
+{"version":2,"start":"npm run dev","port":4173,"install":[{"name":"node dependencies","check":"test -d node_modules","run":"npm install","inputs":["package.json"]}],"services":[{"name":"postgresql","check":"command -v psql","install":"sudo apt-get update && sudo apt-get install -y postgresql","start":"sudo pg_ctlcluster 16 main start","ready":"pg_isready"}]}
