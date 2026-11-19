@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "start": "PATH=\"$PWD/.revolte/runtime/node/bin:$PATH\" .revolte/runtime/node/bin/node .revolte/runtime/tools/node_modules/pnpm/bin/pnpm.cjs --dir web dev --host 0.0.0.0 --port 4173 --strictPort",
+  "port": 4173,
+  "install": [
+    {
+      "name": "Node.js 24 runtime",
+      "check": "test -x .revolte/runtime/node/bin/node && .revolte/runtime/node/bin/node --version | cut -d. -f1 | test \"$(cat)\" = v24",
+      "run": "mkdir -p .revolte/runtime/node && curl -fsSL https://nodejs.org/dist/latest-v24.x/SHASUMS256.txt -o .revolte/runtime/SHASUMS256.txt && arch=$(uname -m) && case \"$arch\" in x86_64) arch=x64 ;; aarch64) arch=arm64 ;; *) exit 1 ;; esac && archive=$(python3 -c \"from pathlib import Path; import sys; print(next(line.split()[1] for line in Path('.revolte/runtime/SHASUMS256.txt').read_text().splitlines() if line.endswith('-linux-'+sys.argv[1]+'.tar.xz')))\" \"$arch\") && curl -fsSL \"https://nodejs.org/dist/latest-v24.x/$archive\" -o \".revolte/runtime/$archive\" && (cd .revolte/runtime && sha256sum --check --ignore-missing SHASUMS256.txt) && tar -xJf \".revolte/runtime/$archive\" -C .revolte/runtime/node --strip-components=1"
+    },
+    {
+      "name": "pnpm 11.0.1",
+      "check": "test -f .revolte/runtime/tools/node_modules/pnpm/bin/pnpm.cjs",
+      "run": "PATH=\"$PWD/.revolte/runtime/node/bin:$PATH\" .revolte/runtime/node/bin/npm install --prefix .revolte/runtime/tools --no-package-lock pnpm@11.0.1"
+    },
+    {
+      "name": "Frontend dependencies",
+      "check": "test -f web/node_modules/.modules.yaml",
+      "run": "PATH=\"$PWD/.revolte/runtime/node/bin:$PATH\" .revolte/runtime/node/bin/node .revolte/runtime/tools/node_modules/pnpm/bin/pnpm.cjs --dir web install --frozen-lockfile"
+    }
+  ],
+  "services": []
+}
