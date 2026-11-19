@@ -15,6 +15,7 @@ export default defineConfig({
   plugins: [react(), babel({ presets: [reactCompilerPreset()] }), tailwindcss()],
   server: {
     host: "0.0.0.0",
+    allowedHosts: ["4173-iagb93vnyjx6m8bhjf6ae.sandbox-v2.revolte.io"],
     port: 3001,
     proxy: {
       "^/api/v1/sse": {
